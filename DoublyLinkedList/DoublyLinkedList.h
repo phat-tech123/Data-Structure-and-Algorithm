@@ -440,5 +440,85 @@ typename DLinkedList<T>::Iterator DLinkedList<T>::Iterator::operator++(int)
 }
 
 
+struct ListNode {
+    int val;
+    ListNode *left;
+    ListNode *right;
+    ListNode(int x = 0, ListNode *l = nullptr, ListNode* r = nullptr) : val(x), left(l), right(r) {}
+};
+ListNode* reverseDLL(ListNode* head) {
+    ListNode* current = head;
+
+    while (current != NULL) {
+        ListNode* tmp = current->left;
+        current->left = current->right;
+        current->right = tmp;
+        if (current->left == NULL) {
+            head = current;
+        }
+        current = current->left;
+    }
+    return head;
+}
+ListNode* tail(ListNode* head) {
+    if (head == NULL) return NULL;
+    ListNode* current = head;
+    while (current->right) {
+        current = current->right;
+    }
+    return current;
+}
+
+ListNode* reverse(ListNode* head, int a, int b) {
+    if (head == NULL)return NULL;
+    //Determine index a & b
+    ListNode* pre = head;
+    ListNode* post = head;
+    for (int i = 1; i < a; i++) {
+        pre = pre->right;
+        post = post->right;
+    }
+    for (int i = a; i < b; i++) {
+        post = post->right;
+    }
+    if (pre == NULL || post == NULL) return head;
+    //reverse
+    if (pre->left == NULL && post->right == NULL) {
+        return reverseDLL(head);
+    }
+    else if (pre->left == NULL) {
+        ListNode* afterPost = post->right;
+        post->right = NULL;
+        afterPost->left = NULL;
+        head = reverseDLL(pre);
+        ListNode* t = tail(head);
+        t->right = afterPost;
+        afterPost->left = t;
+    }
+    else if (post->right == NULL) {
+        ListNode* beforPre = pre->left;
+        pre->left = NULL;
+        beforPre->right = NULL;
+        ListNode* h = reverseDLL(pre);
+        beforPre->right = h;
+        h->left = beforPre;
+    }
+    else {
+        ListNode* afterPost = post->right;
+        post->right = NULL;
+        afterPost->left = NULL;
+        ListNode* beforPre = pre->left;
+        pre->left = NULL;
+        beforPre->right = NULL;
+        ListNode* h = reverseDLL(pre);
+        ListNode* t = tail(h);
+        beforPre->right = h;
+        h->left = beforPre;
+        t->right = afterPost;
+        afterPost->left = t;
+    }
+    
+    return head;    
+}
 #include "DoublyLinkedList.cpp"
 #endif
